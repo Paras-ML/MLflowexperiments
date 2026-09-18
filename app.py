@@ -1,4 +1,4 @@
-
+import dagshub
 import os,sys,warnings
 import pandas as pd
 import numpy as np
@@ -25,6 +25,10 @@ def eval_metrics(actual,pred):
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     np.random.seed(40)
+
+    dagshub.init(repo_owner='sharmaparas23', repo_name='MLflowexperiments', mlflow=True)
+
+
 
     csv_url = (
         "https://raw.githubusercontent.com/mlflow/mlflow/master/tests/datasets/winequality-red.csv"
@@ -69,11 +73,15 @@ if __name__ == "__main__":
         predictions = lr.predict(train_x)
         signature = infer_signature(train_x,predictions)
 
+
+        remote_server_uri = "https://dagshub.com/sharmaparas23/MLflowexperiments.mlflow"
+        mlflow.set_tracking_uri(remote_server_uri)
+
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
         if tracking_url_type_store != "file":
             mlflow.sklearn.log_model(
-                lr, "model" , registered_model_name="ElasticnetWineModel" , signature=signature
+                sk_model=lr, name="model" , registered_model_name="ElasticnetWineModel" , signature=signature
             )
         else:
             mlflow.sklearn.log_model(lr,"model",signature=signature)

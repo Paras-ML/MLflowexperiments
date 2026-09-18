@@ -1,1 +1,5 @@
-mlflow==2.5.0
+dagshub
+mlflow>=3.1
+pandas
+numpy
+scikit-learn
